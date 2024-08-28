@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "zu7M5qwR80OmzaqOFxYtKzpjrTc6GxzDEUZMl8PwwcA=",
+  "Source": "SC.WebApi",
+  "BasePath": "_content/SC.WebApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
