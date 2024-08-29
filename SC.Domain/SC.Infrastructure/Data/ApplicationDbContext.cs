@@ -29,9 +29,9 @@ namespace SC.Infrastructure.Data
         {
 
         }
-        public DbSet<Student> Students { get; set; }
-        public DbSet<Class> Classes { get; set; }
-        public DbSet<StudentEnrollment> StudentEnrollments { get; set; }
+        public DbSet<Student> Students { get; set; } = null!;
+        public DbSet<Class> Classes { get; set; } = null!;
+        public DbSet<StudentEnrollment> StudentEnrollments { get; set; } = null!;
 
     }
 }

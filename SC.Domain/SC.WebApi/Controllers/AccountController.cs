@@ -1,21 +1,25 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SC.Application.Common.Interfaces;
 using SC.Application.Common.ViewModels;
+using System;
+using System.Threading.Tasks;
 
 namespace SC.WebApi.Controllers
 {
-
     [ApiController]
     [Route("[controller]")]
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(IAccountService accountService)
+        public AccountController(IAccountService accountService, ILogger<AccountController> logger)
         {
             _accountService = accountService;
+            _logger = logger;
         }
 
         [HttpPost("google-response")]
@@ -28,11 +32,18 @@ namespace SC.WebApi.Controllers
             }
             catch (UnauthorizedAccessException)
             {
+                _logger.LogWarning("Google login failed: Invalid token.");
                 return Unauthorized(new { message = "Invalid token" });
             }
             catch (ApplicationException ex)
             {
+                _logger.LogError(ex, "An error occurred during Google login.");
                 return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred during Google login.");
+                return StatusCode(500, "An error occurred while processing your request.");
             }
         }
 
@@ -46,25 +57,42 @@ namespace SC.WebApi.Controllers
             }
             catch (UnauthorizedAccessException)
             {
+                _logger.LogWarning("Facebook login failed: Invalid token.");
                 return Unauthorized(new { message = "Invalid token" });
             }
             catch (ApplicationException ex)
             {
+                _logger.LogError(ex, "An error occurred during Facebook login.");
                 return BadRequest(new { message = ex.Message });
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred during Facebook login.");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
         {
-            var result = await _accountService.RegisterUserAsync(model);
+            try
+            {
+                var result = await _accountService.RegisterUserAsync(model);
 
-            if (result.Succeeded)
-            {
-                return CreatedAtAction(nameof(Register), new { id = model.Username }, new { message = "User created successfully" });
+                if (result.Succeeded)
+                {
+                    return CreatedAtAction(nameof(Register), new { id = model.Username }, new { message = "User created successfully" });
+                }
+                else
+                {
+                    _logger.LogWarning("User registration failed: {Errors}", string.Join(", ", result.Errors));
+                    return BadRequest(new { message = "Failed to create user", errors = result.Errors });
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest(new { message = "Failed to create user", errors = result.Errors });
+                _logger.LogError(ex, "An unexpected error occurred during user registration.");
+                return StatusCode(500, "An error occurred while processing your request.");
             }
         }
 
@@ -74,27 +102,43 @@ namespace SC.WebApi.Controllers
             try
             {
                 var token = await _accountService.LoginAsync(request);
-                if(token == null)
+                if (token == null)
                 {
-                    return Unauthorized(new { message = "Login unsuccessful"});
+                    _logger.LogWarning("Login unsuccessful: Invalid credentials for user {Username}.", request.username);
+                    return Unauthorized(new { message = "Login unsuccessful" });
                 }
                 return Ok(new { token });
             }
             catch (UnauthorizedAccessException)
             {
+                _logger.LogWarning("Login failed: Invalid credentials for user {Username}.", request.username);
                 return Unauthorized(new { message = "Invalid token" });
             }
             catch (ApplicationException ex)
             {
+                _logger.LogError(ex, "An error occurred during login for user {Username}.", request.username);
                 return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred during login for user {Username}.", request.username);
+                return StatusCode(500, "An error occurred while processing your request.");
             }
         }
 
         [HttpGet("check")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> checkToken()
+        public IActionResult CheckToken()
         {
-             return Ok();
+            try
+            {
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred while checking the token.");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
     }
 }

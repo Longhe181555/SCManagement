@@ -29,16 +29,6 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 
 })
-.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
-{
-    options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
-    options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
-})
-.AddFacebook(options =>
-{
-    options.AppId = builder.Configuration["Facebook:AppId"];
-    options.AppSecret = builder.Configuration["Facebook:AppSecret"];
-})
 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -88,7 +78,6 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 // Register service implementations
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IClassService, ClassService>();
-builder.Services.AddScoped<IStudentEnrollmentService, StudentEnrollmentService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
     
 

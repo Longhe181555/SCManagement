@@ -54,7 +54,7 @@ namespace SC.Infrastructure.Services
                         {
                             StudentId = studentId,
                             Student = student,
-                            ClassId = insertedClass.Id,
+                            ClassId = insertedClass!.Id,
                             Class = insertedClass
                         };
                         await _studentEnrollmentRepository.AddEnrollmentAsync(newEnrollment);
