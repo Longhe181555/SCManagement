@@ -2,7 +2,6 @@
 using SC.Application.Common.Interfaces;
 using SC.Domain.Entities;
 using SC.Infrastructure.Data;
-using System.Xml.Linq;
 
 namespace SC.Infrastructure.Repositories
 {

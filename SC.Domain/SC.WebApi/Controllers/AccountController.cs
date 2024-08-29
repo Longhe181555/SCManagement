@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using SC.Application.Common.Interfaces;
 using SC.Application.Common.ViewModels;
-using System;
-using System.Threading.Tasks;
 
 namespace SC.WebApi.Controllers
 {

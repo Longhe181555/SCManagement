@@ -33,7 +33,7 @@ namespace SC.WebApi.Controllers
             }
         }
 
-        [HttpGet("getById")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
             try

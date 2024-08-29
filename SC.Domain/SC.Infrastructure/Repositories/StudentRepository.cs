@@ -26,7 +26,10 @@ namespace SC.Infrastructure.Repositories
 
         public async Task<IEnumerable<Student>> GetAllStudentsAsync()
         {
-            return await _context.Students.ToListAsync();
+            return await _context.Students
+                .Include(e => e.StudentEnrollments)
+                .ThenInclude(c => c.Class)
+                .ToListAsync();
         }
 
         public async Task AddStudentAsync(Student student)

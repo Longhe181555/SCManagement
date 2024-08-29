@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using SC.Application.Common.ViewModels;
-using SC.Domain.Entities;
 
 namespace SC.Application.Common.Interfaces
 {

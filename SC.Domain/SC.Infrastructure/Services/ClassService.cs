@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SC.Application.Common.Interfaces;
+﻿using SC.Application.Common.Interfaces;
 using SC.Application.Common.ViewModels;
 using SC.Domain.Entities;
-using System;
 
 
 namespace SC.Infrastructure.Services

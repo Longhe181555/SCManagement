@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SC.Application.Common.Interfaces;
+﻿using SC.Application.Common.Interfaces;
 using SC.Domain.Entities;
-using SC.Infrastructure.Data;
-using SC.Infrastructure.Repositories;
+
 
 namespace SC.Infrastructure.Services
 {
@@ -45,6 +43,11 @@ namespace SC.Infrastructure.Services
 
         public async Task<bool> DeleteStudentAsync(int id)
         {
+            var studentToDelete = await _studentRepository.GetStudentByIdAsync(id);
+            if(studentToDelete == null)
+            {
+                return false;
+            }
             await _studentRepository.DeleteStudentAsync(id);
             return true;
         }

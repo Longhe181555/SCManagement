@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using SC.Application.Common.Interfaces;
 using SC.Domain.Entities;
-using System;
 
 namespace SC.WebApi.Controllers
 {
