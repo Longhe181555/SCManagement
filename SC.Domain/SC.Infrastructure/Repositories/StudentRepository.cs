@@ -19,6 +19,11 @@ namespace SC.Infrastructure.Repositories
             return await _context.Students.FindAsync(id);
         }
 
+        public async Task<Student?> GetStudentByNameAsync(string name)
+        {
+            return await _context.Students.FirstOrDefaultAsync(s => s.Name == name);
+        }
+
         public async Task<IEnumerable<Student>> GetAllStudentsAsync()
         {
             return await _context.Students.ToListAsync();
@@ -32,7 +37,14 @@ namespace SC.Infrastructure.Repositories
 
         public async Task UpdateStudentAsync(Student student)
         {
-            _context.Students.Update(student);
+            var existingStudent = await _context.Students.FindAsync(student.Id);
+            if (existingStudent != null)
+            {
+                existingStudent.Name = student.Name;
+                existingStudent.Address = student.Address;
+                existingStudent.PhoneNumber = student.PhoneNumber;
+                existingStudent.DateOfBirth = student.DateOfBirth;
+            }
             await _context.SaveChangesAsync();
         }
 

@@ -9,29 +9,29 @@ namespace SC.Infrastructure.Services
 {
     public class ClassService : IClassService
     {
-        private readonly IClassRepository _repository;
+        private readonly IClassRepository _classRepository;
         private readonly IStudentRepository _studentRepository;
         private readonly IStudentEnrollmentRepository _studentEnrollmentRepository;
         public ClassService(IClassRepository repository, IStudentEnrollmentRepository studentEnrollmentRepository, IStudentRepository studentRepository)
         {
-            _repository = repository;
+            _classRepository = repository;
             _studentEnrollmentRepository = studentEnrollmentRepository;
             _studentRepository = studentRepository;
         }
 
         public async Task<IEnumerable<Class>> GetAllClassesAsync()
         {
-            return await _repository.GetAllAsync();
+            return await _classRepository.GetAllAsync();
         }
 
         public async Task<Class?> GetClassByIdAsync(int id)
         {
-            return await _repository.GetByIdAsync(id);
+            return await _classRepository.GetByIdAsync(id);
         }
 
         public async Task<Class?> GetClassByNameAsync(string name)
         {
-            return await _repository.GetByNameAsync(name);
+            return await _classRepository.GetByNameAsync(name);
         }
 
         public async Task<Class> CreateClassAsync(EnrollViewModel request)
@@ -41,9 +41,9 @@ namespace SC.Infrastructure.Services
                 Name = request.Name,
                 Address = request.Address
             };
-            await _repository.AddAsync(newClass);
+            await _classRepository.AddAsync(newClass);
 
-            var insertedClass = await _repository.GetByNameAsync(newClass.Name);
+            var insertedClass = await _classRepository.GetByNameAsync(newClass.Name);
 
             foreach (var studentId in request.Sid)
             {
@@ -66,7 +66,7 @@ namespace SC.Infrastructure.Services
 
         public async Task<Class> UpdateClassAsync(EnrollViewModel request)
         {
-            var classToUpdate = await _repository.GetByIdAsync(request.Id);
+            var classToUpdate = await _classRepository.GetByIdAsync(request.Id);
             if (classToUpdate == null)
             {
                 throw new KeyNotFoundException("Class not found");
@@ -105,20 +105,20 @@ namespace SC.Infrastructure.Services
                     }
                 }
             }
-            await _repository.UpdateAsync(classToUpdate);
+            await _classRepository.UpdateAsync(classToUpdate);
             return classToUpdate;
         }
 
 
         public async Task<bool> DeleteClassAsync(int id)
         {
-            var classToDelete = await _repository.GetByIdAsync(id);
+            var classToDelete = await _classRepository.GetByIdAsync(id);
             if (classToDelete == null)
             {
                 return false;
             }
 
-            await _repository.DeleteAsync(id);
+            await _classRepository.DeleteAsync(id);
             return true;
         }
     }

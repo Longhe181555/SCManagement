@@ -38,9 +38,9 @@ namespace SC.WebApi.Controllers
         {
             try
             {
-                var @class = await _classService.GetClassByIdAsync(id);
-                if (@class == null) return NotFound();
-                return Ok(@class);
+                var classRequest = await _classService.GetClassByIdAsync(id);
+                if (classRequest == null) return NotFound();
+                return Ok(classRequest);
             }
             catch (Exception ex)
             {

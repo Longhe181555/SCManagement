@@ -2,70 +2,50 @@
 using SC.Application.Common.Interfaces;
 using SC.Domain.Entities;
 using SC.Infrastructure.Data;
+using SC.Infrastructure.Repositories;
 
 namespace SC.Infrastructure.Services
 {
     public class StudentService : IStudentService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IStudentRepository _studentRepository;
 
-        public StudentService(ApplicationDbContext context)
+        public StudentService(IStudentRepository studentRepository)
         {
-            _context = context;
+            _studentRepository = studentRepository;
         }
 
         public async Task<IEnumerable<Student>> GetAllStudentsAsync()
         {
-            return await _context.Students.Include(s => s.StudentEnrollments)
-                .ThenInclude(e => e.Class).ToListAsync();
+            return await _studentRepository.GetAllStudentsAsync();
         }
 
         public async Task<Student?> GetStudentByIdAsync(int id)
         {
-            return await _context.Students.Include(s => s.StudentEnrollments)
-                .ThenInclude(e => e.Class).FirstOrDefaultAsync(s => s.Id == id);
+            return await _studentRepository.GetStudentByIdAsync(id);
         }
 
         public async Task<Student?> GetStudentByNameAsync(string name)
         {
-            return await _context.Students.Include(s => s.StudentEnrollments)
-                .ThenInclude(e => e.Class).FirstOrDefaultAsync(s => s.Name == name);
+            return await _studentRepository.GetStudentByNameAsync(name);
         }
 
         public async Task<Student> CreateStudentAsync(Student student)
         {
-            _context.Students.Add(student);
-            await _context.SaveChangesAsync();
+            await _studentRepository.AddStudentAsync(student);
             return student;
         }
 
         public async Task<bool> UpdateStudentAsync(Student student)
         {
-            var existingStudent = await _context.Students.FindAsync(student.Id);
-            if (existingStudent == null)
-            {
-                return false;
-            }
-
-            existingStudent.Name = student.Name;
-            existingStudent.Address = student.Address;
-            existingStudent.PhoneNumber = student.PhoneNumber;
-            existingStudent.DateOfBirth = student.DateOfBirth;
-
-            await _context.SaveChangesAsync();
+            if(student == null) { return false; }
+            await _studentRepository.UpdateStudentAsync(student);
             return true;
         }
 
         public async Task<bool> DeleteStudentAsync(int id)
         {
-            var student = await _context.Students.FindAsync(id);
-            if (student == null)
-            {
-                return false;
-            }
-
-            _context.Students.Remove(student);
-            await _context.SaveChangesAsync();
+            await _studentRepository.DeleteStudentAsync(id);
             return true;
         }
     }
